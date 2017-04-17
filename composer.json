@@ -1,0 +1,27 @@
+{
+    "name": "nvbooster/calculatorbundle",
+    "description": "Symfony integration bundle for Calculator",
+    "type": "symfony-bundle",
+    "authors" : [{
+            "name" : "Vyacheslav Nechipurenko",
+            "email" : "nvb@aproxima.ru",
+            "homepage" : "https://github.com/nvbooster"
+        }
+    ],
+    "autoload" : {
+        "psr-4" : {
+            "nvbooster\\CalculatorBundle\\" : ""
+        }
+    },
+    "repositories" : [{
+            "type" : "git",
+            "url" : "https://github.com/nvbooster/calculator.git"
+        }
+    ],
+    "require": {
+        "nvbooster/calculator": "dev-master",
+        "symfony/symfony": ">=2.5"
+    },
+    "license": "GNU GPL 3.0",
+    "minimum-stability": "dev"
+}
