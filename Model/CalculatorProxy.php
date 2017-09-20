@@ -1,5 +1,5 @@
 <?php
-namespace nvbooster\CalculatorBundle\Model;
+namespace nvbooster\CalculatorForm\Model;
 
 use nvbooster\Calculator\Calculator;
 
@@ -46,5 +46,4 @@ class CalculatorProxy
     {
         $this->calculator->set($name, $value);
     }
-
 }
