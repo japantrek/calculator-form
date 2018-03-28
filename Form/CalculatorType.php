@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use nvbooster\CalculatorForm\Model\CalculatorProxy;
 
 /**
  * CalculatorType
@@ -26,36 +27,34 @@ class CalculatorType extends AbstractType
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /**
+                 * @var CalculatorProxy $data
+                 */
+                $data = $event->getData();
                 /* @var $calculator Calculator */
-                $calculator = $event->getData()->_calculator();
+                $calculator = $data ->_calculator();
                 $builder = $event->getForm();
 
                 foreach (array_keys($calculator->getInputsData()) as $inputName) {
+                    $config = $data->getConfig($inputName);
                     $choices = $calculator->getInputValuesList($inputName);
 
                     if (is_array($choices)) {
                         $num = count($choices);
-                        if (!$num) {
-                            $builder->add($inputName, HiddenType::class, array('data' => ''));
-                        } elseif (1 == $num) {
-                            list($key) = each($choices);
-                            $builder->add($inputName, HiddenType::class, array('data' => $key));
-                        } elseif (5 > $num) {
+                        if ($num > 1) {
+                            $expandedThreshold = key_exists('radio_threshold', $config) ? (int) $config['radio_threshold'] : 5;
+                            $forceExpanded = !empty($config['force_radio']);
                             $builder->add($inputName, ChoiceType::class, array(
                                 'label' => $calculator->getInputLabel($inputName),
                                 'choices' => array_flip($choices),
                                 'choices_as_values' => true,
-                                'expanded' => true
+                                'expanded' => $forceExpanded || ($expandedThreshold > $num),
                             ));
-                        } else {
-                            $builder->add($inputName, ChoiceType::class, array(
-                                'label' => $calculator->getInputLabel($inputName),
-                                'choices' => array_flip($choices),
-                                'choices_as_values' => true,
-                                'expanded' => false
-                            ));
-                        }
 
+                        } else {
+                            list($key) = each($choices);
+                            $builder->add($inputName, HiddenType::class, array('data' => $key ?: ''));
+                        }
                     } else {
                         $builder->add($inputName, TextType::class, array(
                             'label' => $calculator->getInputLabel($inputName),

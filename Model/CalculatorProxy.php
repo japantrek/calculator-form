@@ -10,14 +10,24 @@ use nvbooster\Calculator\Calculator;
  */
 class CalculatorProxy
 {
+    /**
+     * @var Calculator
+     */
     private $calculator;
 
     /**
-     * @param Calculator $calculator
+     * @var array
      */
-    public function __construct(Calculator $calculator)
+    private $config;
+
+    /**
+     * @param Calculator $calculator
+     * @param array      $config
+     */
+    public function __construct(Calculator $calculator, $config = array())
     {
         $this->calculator = $calculator;
+        $this->config = $config;
     }
 
     /**
@@ -45,5 +55,17 @@ class CalculatorProxy
     public function __set($name, $value)
     {
         $this->calculator->set($name, $value);
+    }
+
+    /**
+     * @param array $field
+     *
+     * @return mixed
+     */
+    public function getConfig($field)
+    {
+        $field = (string) $field;
+
+        return empty($this->config[$field]) ? array() : $this->config[$field];
     }
 }
